@@ -2,9 +2,9 @@
 #-*- encoding: UTF-8 -*-
 
 import argparse
+import cal.holidays
 import calendar
 import datetime
-import holidays
 import locale
 import pyexiv2
 import reportlab.pdfgen.canvas
@@ -49,7 +49,7 @@ RGB_standard = (0.58, 0.58, 0.58)
 
 def get_col(day, weekday):
  """Ermittelt, in der wievielten Woche des Monats der Tag day
-    enthalten ist.  Zählung beginnt mit 0."""
+    enthalten ist.  ZÃ¤hlung beginnt mit 0."""
  col_cand = day // 7
  row_cand = day %  7
  if (weekday < row_cand):
@@ -57,7 +57,7 @@ def get_col(day, weekday):
  return col_cand
 
 def get_weekday_name(weekday):
- """Schreibt die abgekürzten Wochentagsbezeichnungen aus."""
+ """Schreibt die abgekÃ¼rzten Wochentagsbezeichnungen aus."""
  if   (weekday == 0):
   return locale.nl_langinfo(locale.ABDAY_2)
  elif (weekday == 1):
@@ -101,19 +101,19 @@ def get_month_name(month):
   return locale.nl_langinfo(locale.MON_12)
 
 def setcolor(rr, month, day, canvas):
- """Richtige Farbe für den entsprechenden Tag wählen"""
+ """Richtige Farbe fÃ¼r den entsprechenden Tag wÃ¤hlen"""
  if (datetime.datetime(cmdline_args.year, month, day, 0, 0, 0) in rr):
   canvas.setFillColorRGB(RGB_free[0], RGB_free[1], RGB_free[2])
  else:
   canvas.setFillColorRGB(RGB_work[0], RGB_work[1], RGB_work[2])
 
-def coeff_R2(c, (x, y)):
+def coeff_R2(c, p):
  """Multipliziert c in R mit Vektor (x, y) in R^2"""
- return (c * x, c * y)
+ return (c * p[0], c * p[1])
 
-def add_R2((x_1, y_1), (x_2, y_2)):
+def add_R2(p_1, p_2):
  """Addiert zwei Vektoren (x_1, y_1), (x_2, y_2)"""
- return (x_1 + x_2, y_1 + y_2)
+ return (p_1[0] + p_2[0], p_1[1] + p_2[1])
 
 ###################################
 
@@ -127,8 +127,8 @@ locale.setlocale(locale.LC_ALL, "")
 #
 cmdline = argparse.ArgumentParser(
  description = """...baut Wandkalender in Form von PDF-Dateien zum
-                  Ausdrucken und Aufhängen""")
-countries =  list(holidays.rr_dict.keys())
+                  Ausdrucken und AufhÃ¤ngen""")
+countries =  list(cal.holidays.rr_dict.keys())
 countries.sort()
 cmdline.add_argument("country", choices = countries, help = "Bundesland")
 cmdline.add_argument("year", type = int, help = "Jahr")
@@ -142,7 +142,7 @@ cmdline_args = cmdline.parse_args()
 #
 #
 
-rr =  holidays.rr_dict[cmdline_args.country]
+rr =  cal.holidays.rr_dict[cmdline_args.country]
 
 filename_out = str(cmdline_args.year).zfill(4) + ".PDF"
 
@@ -169,10 +169,10 @@ for month in range(1, 13):
    weekday_name = get_weekday_name(weekday)
    position     = add_R2(weekday_panel, coeff_R2(weekday, diff_day))
    canvas.drawString(position[0], position[1], weekday_name)
- image = pyexiv2.ImageMetadata(filename_in)
- image.read()
- if 'Exif.Photo.UserComment' in image.exif_keys:
-  metadata = image['Exif.Photo.UserComment']
+ image = pyexiv2.Image(filename_in)
+ imageData =  image.read_exif()
+ if 'Exif.Photo.UserComment' in imageData:
+  metadata = imageData['Exif.Photo.UserComment']
   canvas.setFont("Helvetica", 13)
   canvas.drawString(capt_place[0], capt_place[1], metadata)
  canvas.setFont("Helvetica", 25)
