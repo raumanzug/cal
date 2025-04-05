@@ -4,8 +4,12 @@
 
 F&uuml;hre folgende Zeile nach dem Auschecken aus:
 
-	python2 setup.py install
+	python -m pip install --upgrade build
+	python -m build
 
+Verzeichnis `dist` enth&auml;lt jetzt `cal-0.2.tar.gz`.  Installiere jetzt:
+
+	python -m pip install dist/cal-0.2.tar.gz
 
 ## Anwendung
 
@@ -26,7 +30,7 @@ Um mit Hilfe dieses Programmes f&uuml;r das Jahr `<year>` einen Wandkalender im 
 
 Folgendes Kommando erzeugt aus diesen Dateien eine Datei `<year>.PDF`, die den Kalender enth&auml;lt:
 
-	python2 -m cal <country> <year>
+	python -m cal <country> <year>
 
 worin `<country>` das Bundesland bezeichnet, dessen gesetzliche Feiertage im Kalender markiert sind.
 
