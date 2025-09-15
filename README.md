@@ -1,3 +1,5 @@
+Mehr hierzu: [hier](https://kohlenkeller.wordpress.com/2025/09/11/wandkalender-bauen/)
+
 # `cal` - Ein Programm zum Erzeugen von Jahreswandkalendern
 
 ## Installation
